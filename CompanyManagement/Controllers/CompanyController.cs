@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CompanyManagement.Controllers
 {
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CompanyController : Controller
     {

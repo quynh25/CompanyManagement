@@ -8,6 +8,7 @@ namespace CompanyManagement.Helper
     {
         public MappingProfiles() { 
             CreateMap<Company,CompanyDto>();
+            CreateMap<Center,CenterDto>();
         }
     }
 }
