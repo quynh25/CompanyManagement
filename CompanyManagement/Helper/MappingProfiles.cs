@@ -11,6 +11,7 @@ namespace CompanyManagement.Helper
             CreateMap<Center,CenterDto>();
             CreateMap<Derpartment,DerpartmentDto>();
             CreateMap<Project,ProjectDto>();
+            CreateMap<Employee,EmployeeDto>();
         }
     }
 }
