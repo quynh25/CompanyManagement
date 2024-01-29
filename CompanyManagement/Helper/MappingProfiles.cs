@@ -10,6 +10,7 @@ namespace CompanyManagement.Helper
             CreateMap<Company,CompanyDto>();
             CreateMap<Center,CenterDto>();
             CreateMap<Derpartment,DerpartmentDto>();
+            CreateMap<Project,ProjectDto>();
         }
     }
 }
