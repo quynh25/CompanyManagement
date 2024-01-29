@@ -1,4 +1,6 @@
+using AutoMapper;
 using CompanyManagement.Data;
+using CompanyManagement.Dto;
 using CompanyManagement.Interfaces;
 using CompanyManagement.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-
 ///
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICenterRepository, CenterRepository>();
+builder.Services.AddScoped<IDerpartmentRepository, DerpartmentRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 ///
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
