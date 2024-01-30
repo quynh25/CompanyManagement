@@ -49,5 +49,11 @@ namespace CompanyManagement.Repository
             var saved = _context.SaveChanges();
             return saved >0 ?true : false;
         }
+
+        public bool UpdateProject(Project project)
+        {
+            _context.Update(project);
+            return Save();
+        }
     }
 }

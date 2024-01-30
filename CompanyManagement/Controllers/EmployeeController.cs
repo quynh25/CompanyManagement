@@ -111,5 +111,35 @@ namespace CompanyManagement.Controllers
             return NoContent();
 
         }
+        [HttpPut("{employId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCompany(int employId, [FromBody] EmployeeDto updateEmployee)
+        {
+            if (updateEmployee == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (employId != updateEmployee.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_employeeRepository.EmployeeExits(employId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var employeeMap = _mapper.Map<Employee>(updateEmployee);
+            if (!_employeeRepository.UpdateEmployee(employeeMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating employee");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using CompanyManagement.Dto;
 using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
+using CompanyManagement.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManagement.Controllers
@@ -110,6 +111,36 @@ namespace CompanyManagement.Controllers
             }
             return NoContent();
 
+        }
+        [HttpPut("{projectId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCompany(int projectId, [FromBody] ProjectDto updateProject)
+        {
+            if (updateProject == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (projectId != updateProject.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_projectRepository.ProjectExits(projectId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var projectMap = _mapper.Map<Project>(updateProject);
+            if (!_projectRepository.UpdateProject(projectMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating project");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
         }
     }
 }

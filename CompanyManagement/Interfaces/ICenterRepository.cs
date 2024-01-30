@@ -10,6 +10,7 @@ namespace CompanyManagement.Interfaces
         bool CenterExists(int id);
         bool CreateCenter(Center center);
         bool DeleteCenter(Center center);
+        bool UpdateCenter(Center center);
         bool Save();
     }
 }

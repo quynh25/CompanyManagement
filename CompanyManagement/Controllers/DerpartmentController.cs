@@ -112,5 +112,35 @@ namespace CompanyManagement.Controllers
             }
             return NoContent();
         }
+        [HttpPut("{departmentId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateDeparment(int departmentId, [FromBody] DerpartmentDto updateDepartment)
+        {
+            if (updateDepartment == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (departmentId != updateDepartment.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_derpartmentRepository.DerpartmentExits(departmentId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var departmentMap = _mapper.Map<Derpartment>(updateDepartment);
+            if (!_derpartmentRepository.UpdateDeparment(departmentMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating department");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
     }
 }

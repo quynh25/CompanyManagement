@@ -49,5 +49,11 @@ namespace CompanyManagement.Repository
             var saved= _context.SaveChanges();
             return saved>0 ? true : false;
         }
+
+        public bool UpdateDeparment(Derpartment derpartment)
+        {
+            _context.Update(derpartment);
+            return Save();
+        }
     }
 }

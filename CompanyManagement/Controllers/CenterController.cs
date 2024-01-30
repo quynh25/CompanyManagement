@@ -115,5 +115,35 @@ namespace CompanyManagement.Controllers
             }
             return NoContent();
         }
+        [HttpPut("{centerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCenter(int centerId, [FromBody] CenterDto updateCenter)
+        {
+            if (updateCenter == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (centerId != updateCenter.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_centerRepository.CenterExists(centerId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var centerMap = _mapper.Map<Center>(updateCenter);
+            if (!_centerRepository.UpdateCenter(centerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating center");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
     }
 }

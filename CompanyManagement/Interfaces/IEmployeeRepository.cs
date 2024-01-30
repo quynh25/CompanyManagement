@@ -10,6 +10,7 @@ namespace CompanyManagement.Interfaces
         bool EmployeeExits(int id);
         bool CreateEmployee(Employee employee);
         bool DeleteEmployee(Employee employee);
+        bool UpdateEmployee(Employee employee);
         bool Save();
     }
 }

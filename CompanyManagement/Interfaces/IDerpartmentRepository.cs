@@ -10,6 +10,7 @@ namespace CompanyManagement.Interfaces
         bool DerpartmentExits(int id);
         bool CreateDeparment(Derpartment department);
         bool DeleteDeparment(Derpartment derpartment);
+        bool UpdateDeparment(Derpartment derpartment);
         bool Save();
 
     }

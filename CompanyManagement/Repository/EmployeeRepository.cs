@@ -50,5 +50,11 @@ namespace CompanyManagement.Repository
             var saved = _dataContext.SaveChanges();
             return saved > 0 ? true:false;
         }
+
+        public bool UpdateEmployee(Employee employee)
+        {
+            _dataContext.Update(employee);
+            return Save();
+        }
     }
 }
