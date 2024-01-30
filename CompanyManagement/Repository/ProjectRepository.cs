@@ -12,6 +12,12 @@ namespace CompanyManagement.Repository
             _context = context;
         }
 
+        public bool CreateProject(Project project)
+        {
+            _context.Add(project);
+            return Save();
+        }
+
         public ICollection<Derpartment> GetDepartmentByProjects(int deparmentId)
         {
             return _context.Projects.Where(p=>p.Id == deparmentId).Select(p=>p.Derpartment).ToList();
@@ -30,6 +36,12 @@ namespace CompanyManagement.Repository
         public bool ProjectExits(int id)
         {
             return _context.Derpartments.Any(p=>p.Id==id);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved >0 ?true : false;
         }
     }
 }

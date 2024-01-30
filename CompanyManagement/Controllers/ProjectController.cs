@@ -11,10 +11,12 @@ namespace CompanyManagement.Controllers
     public class ProjectController:Controller
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly IDerpartmentRepository _derpartmentRepository;
         private readonly IMapper _mapper;
-        public ProjectController(IProjectRepository projectRepository, IMapper mapper)
+        public ProjectController(IProjectRepository projectRepository,IDerpartmentRepository derpartmentRepository, IMapper mapper)
         {
             _projectRepository = projectRepository;
+            _derpartmentRepository = derpartmentRepository;
             _mapper = mapper;
         }
         [HttpGet]
@@ -55,5 +57,36 @@ namespace CompanyManagement.Controllers
             }
             return Ok(department);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateProject([FromQuery] int derpartmentId, [FromBody] ProjectDto createProject)
+        {
+            if(createProject == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var project = _projectRepository.GetProjects()
+                .Where(p=>p.ProjectName.Trim().ToUpper()==createProject.ProjectName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if(project != null) {
+                ModelState.AddModelError("", "department alrealy exists");
+                return StatusCode(422, ModelState);
+            }
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var projectMap = _mapper.Map<Project>(createProject);
+            projectMap.Derpartment = _derpartmentRepository.GetDerpartmentsById(derpartmentId);
+            if (!_projectRepository.CreateProject(projectMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while savin");
+
+            }
+            return Ok("succefully create");
+        }
+
     }
 }

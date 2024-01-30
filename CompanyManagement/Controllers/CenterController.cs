@@ -12,10 +12,12 @@ namespace CompanyManagement.Controllers
     public class CenterController : Controller
     {
         private readonly ICenterRepository _centerRepository;
+        private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
 
-        public CenterController(ICenterRepository centerRepository, IMapper mapper) {
+        public CenterController(ICenterRepository centerRepository,ICompanyRepository companyRepository, IMapper mapper) {
             _centerRepository = centerRepository;
+            _companyRepository= companyRepository;
             _mapper = mapper;
         }
 
@@ -57,6 +59,38 @@ namespace CompanyManagement.Controllers
                 return BadRequest();
             }
             return Ok(company);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCenter([FromQuery] int companyId,[FromBody] CenterDto centerCreate)
+        {
+            if(centerCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var centers = _centerRepository.GetCenter()
+                .Where(c => c.CenterName.Trim().ToUpper() == centerCreate.CenterName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if(centers != null)
+            {
+                ModelState.AddModelError("", "center alrealy exists");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var centerMap = _mapper.Map<Center>(centerCreate);
+            centerMap.Company = _companyRepository.GetCompany(companyId);
+            if (!_centerRepository.CreateCenter(centerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while savin");
+                return StatusCode(500,ModelState);
+            }
+            return Ok("successfully created");
+
         }
     }
 }

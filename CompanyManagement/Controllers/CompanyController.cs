@@ -43,6 +43,35 @@ namespace CompanyManagement.Controllers
             }
             return Ok(company);
         }
-       
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCompany([FromBody] CompanyDto companyCreate)
+        {
+            if(companyCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var company = _companyRepository.GetCompanies()
+                .Where(c => c.CompanyName.Trim().ToUpper() == companyCreate.CompanyName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if(company != null) {
+                ModelState.AddModelError("", "company already exists");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var companyMap = _mapper.Map<Company>(companyCreate);
+            if (!_companyRepository.CreateCompany(companyMap))
+            {
+                ModelState.AddModelError("", "something went wrong while savin");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("successfully created");
+        }
+
+
     }
 }

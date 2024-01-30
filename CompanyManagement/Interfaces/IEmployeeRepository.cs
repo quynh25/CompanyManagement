@@ -8,5 +8,7 @@ namespace CompanyManagement.Interfaces
         Employee GetEmployeeById(int id);
         ICollection<Derpartment> GetDerpartmentByEmployee(int  employeeId);
         bool EmployeeExits(int id);
+        bool CreateEmployee(Employee employee);
+        bool Save();
     }
 }

@@ -2,6 +2,7 @@
 using CompanyManagement.Dto;
 using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
+using CompanyManagement.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManagement.Controllers
@@ -11,10 +12,12 @@ namespace CompanyManagement.Controllers
     public class EmployeeController:Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDerpartmentRepository _derpartmentRepository;
         private readonly IMapper _mapper;
-        public EmployeeController(IEmployeeRepository employeeRepository, IMapper mapper)
+        public EmployeeController(IEmployeeRepository employeeRepository,IDerpartmentRepository derpartmentRepository, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
+            _derpartmentRepository = derpartmentRepository;
             _mapper = mapper;
         }
         [HttpGet]
@@ -54,6 +57,37 @@ namespace CompanyManagement.Controllers
                 return BadRequest(ModelState);
             }
             return Ok(department);
+        }
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateEmployee([FromQuery] int derpartmentId, [FromBody] EmployeeDto createEmployee)
+        {
+            if(createEmployee == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var employee = _employeeRepository.GetEmployees()
+                .Where(e => e.EmployeeName.Trim().ToUpper() == createEmployee.EmployeeName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if (employee != null)
+            {
+                ModelState.AddModelError("", "employee alrealy exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var employeeMap = _mapper.Map<Employee>(createEmployee);
+            employeeMap.Derpartment = _derpartmentRepository.GetDerpartmentsById(derpartmentId);
+            if (!_employeeRepository.CreateEmployee(employeeMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while savin");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("successfully created");
         }
     }
 }

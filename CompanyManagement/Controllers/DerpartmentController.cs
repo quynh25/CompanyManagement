@@ -2,6 +2,7 @@
 using CompanyManagement.Dto;
 using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
+using CompanyManagement.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyManagement.Controllers
@@ -11,10 +12,14 @@ namespace CompanyManagement.Controllers
     public class DerpartmentController : Controller
     {
         private readonly IDerpartmentRepository _derpartmentRepository;
+        private readonly ICenterRepository _centerRepository;
         private readonly IMapper _mapper;
-        public DerpartmentController(IDerpartmentRepository derpartmentRepository, IMapper mapper)
+        public DerpartmentController(IDerpartmentRepository derpartmentRepository, 
+            ICenterRepository centerRepository
+            ,IMapper mapper)
         {
             _derpartmentRepository = derpartmentRepository;
+            _centerRepository = centerRepository;
             _mapper = mapper;
         }
         [HttpGet]
@@ -55,6 +60,35 @@ namespace CompanyManagement.Controllers
                 return BadRequest(ModelState);
             }
             return Ok(center);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateDerpartment([FromQuery] int centerId,[FromBody] DerpartmentDto createDerpartment)
+        {
+            if(createDerpartment == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var derpartment = _derpartmentRepository.GetDerpartments()
+                .Where(d => d.DerpartmentName.Trim().ToUpper()==createDerpartment.DerpartmentName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if (derpartment != null) {
+                ModelState.AddModelError("", "department alrealy exists");
+                return StatusCode(422, ModelState);
+            }
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var derpartmentMap = _mapper.Map<Derpartment>(createDerpartment);
+            derpartmentMap.Center = _centerRepository.GetCenter(centerId);
+            if(!_derpartmentRepository.CreateDeparment(derpartmentMap) ){
+                ModelState.AddModelError("", "Something went wrong while savin");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("successfully created");
         }
     }
 }

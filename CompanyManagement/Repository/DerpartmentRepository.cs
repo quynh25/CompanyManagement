@@ -11,6 +11,13 @@ namespace CompanyManagement.Repository
         {
             _context = context;
         }
+
+        public bool CreateDeparment(Derpartment department)
+        {
+            _context.Add(department);
+            return Save();
+        }
+
         public bool DerpartmentExits(int id)
         {
             return _context.Derpartments.Any(x => x.Id == id);
@@ -29,6 +36,12 @@ namespace CompanyManagement.Repository
         public Derpartment GetDerpartmentsById(int id)
         {
             return _context.Derpartments.Where(d => d.Id == id).FirstOrDefault();
+        }
+
+        public bool Save()
+        {
+            var saved= _context.SaveChanges();
+            return saved>0 ? true : false;
         }
     }
 }
