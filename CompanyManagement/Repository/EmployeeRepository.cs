@@ -12,6 +12,19 @@ namespace CompanyManagement.Repository
         {
             _dataContext = dataContext;
         }
+
+        public bool CreateEmployee(Employee employee)
+        {
+            _dataContext.Add(employee);
+            return Save();
+        }
+
+        public bool DeleteEmployee(Employee employee)
+        {
+            _dataContext.Remove(employee);
+            return Save();
+        }
+
         public bool EmployeeExits(int id)
         {
            return _dataContext.Employees.Any(e => e.Id == id);
@@ -30,6 +43,18 @@ namespace CompanyManagement.Repository
         public ICollection<Employee> GetEmployees()
         {
             return _dataContext.Employees.ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _dataContext.SaveChanges();
+            return saved > 0 ? true:false;
+        }
+
+        public bool UpdateEmployee(Employee employee)
+        {
+            _dataContext.Update(employee);
+            return Save();
         }
     }
 }

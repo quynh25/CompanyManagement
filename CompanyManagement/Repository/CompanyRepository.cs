@@ -16,6 +16,19 @@ namespace CompanyManagement.Repository
         {
             return _context.Companys.Any(x => x.Id == id);
         }
+
+        public bool CreateCompany(Company company)
+        {
+            _context.Add(company);
+            return Save();
+        }
+
+        public bool DeleteCompany(Company company)
+        {
+            _context.Remove(company);
+            return Save();
+        }
+
         //HIỂN THỊ
         public ICollection<Company> GetCompanies()
         {
@@ -26,6 +39,17 @@ namespace CompanyManagement.Repository
         {
             return _context.Companys.Where(c => c.Id == id).FirstOrDefault();
         }
-    
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved >0 ? true : false;
+        }
+
+        public bool UpdateCompany(Company company)
+        {
+            _context.Update(company);
+            return Save();
+        }
     }
 }

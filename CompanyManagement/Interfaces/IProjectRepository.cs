@@ -7,5 +7,9 @@ namespace CompanyManagement.Interfaces
         Project GetProjectById(int id);
         ICollection<Derpartment> GetDepartmentByProjects(int deparmentId);
         bool ProjectExits(int id);
+        bool CreateProject(Project project);
+        bool DeleteProject(Project project);
+        bool UpdateProject(Project project);
+        bool Save();
     }
 }

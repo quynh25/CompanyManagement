@@ -43,6 +43,86 @@ namespace CompanyManagement.Controllers
             }
             return Ok(company);
         }
-       
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCompany([FromBody] CompanyDto companyCreate)
+        {
+            if(companyCreate == null)
+            {
+                return BadRequest(ModelState);
+            }
+            var company = _companyRepository.GetCompanies()
+                .Where(c => c.CompanyName.Trim().ToUpper() == companyCreate.CompanyName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+            if(company != null) {
+                ModelState.AddModelError("", "company already exists");
+                return StatusCode(422, ModelState);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var companyMap = _mapper.Map<Company>(companyCreate);
+            if (!_companyRepository.CreateCompany(companyMap))
+            {
+                ModelState.AddModelError("", "something went wrong while savin");
+                return StatusCode(500, ModelState);
+            }
+            return Ok("successfully created");
+        }
+        [HttpDelete("{companyId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCompany(int companyId)
+        {
+            if (!_companyRepository.CompanyExists(companyId))
+            {
+                return NotFound();
+            }
+            var companyDelete = _companyRepository.GetCompany(companyId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_companyRepository.DeleteCompany(companyDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting company");
+            }
+            return NoContent();
+
+        }
+        [HttpPut("{companyId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCompany(int  companyId,[FromBody] CompanyDto updateCompany)
+        {
+            if(updateCompany == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if(companyId != updateCompany.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_companyRepository.CompanyExists(companyId))
+            {
+                return NotFound();
+            }
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var companyMap = _mapper.Map<Company>(updateCompany);
+            if(!_companyRepository.UpdateCompany(companyMap))
+            {
+                ModelState.AddModelError("", "Something went wrong updating company");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+
     }
 }

@@ -17,6 +17,18 @@ namespace CompanyManagement.Repository
             return _context.Centers.Any(x => x.Id == id);
         }
 
+        public bool CreateCenter(Center center)
+        {
+            _context.Add(center);
+            return Save();
+        }
+
+        public bool DeleteCenter(Center center)
+        {
+            _context.Remove(center);
+            return Save();
+        }
+
         public ICollection<Center> GetCenter()
         {
             return _context.Centers.ToList();
@@ -30,6 +42,18 @@ namespace CompanyManagement.Repository
         public ICollection<Company> GetCompanyByCenter(int companyId)
         {
             return _context.Centers.Where(c => c.Id==companyId).Select(c => c.Company).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdateCenter(Center center)
+        {
+            _context.Update(center); 
+            return Save();
         }
     }
 }
