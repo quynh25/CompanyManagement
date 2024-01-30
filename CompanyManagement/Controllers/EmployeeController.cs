@@ -89,5 +89,27 @@ namespace CompanyManagement.Controllers
             }
             return Ok("successfully created");
         }
+        [HttpDelete("{employeeId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteEmployee(int employeeId)
+        {
+            if (!_employeeRepository.EmployeeExits(employeeId))
+            {
+                return NotFound();
+            }
+            var employeeDelete = _employeeRepository.GetEmployeeById(employeeId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_employeeRepository.DeleteEmployee(employeeDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting employee");
+            }
+            return NoContent();
+
+        }
     }
 }

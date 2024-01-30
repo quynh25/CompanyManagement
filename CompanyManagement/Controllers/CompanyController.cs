@@ -71,7 +71,27 @@ namespace CompanyManagement.Controllers
             }
             return Ok("successfully created");
         }
+        [HttpDelete("{companyId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCompany(int companyId)
+        {
+            if (!_companyRepository.CompanyExists(companyId))
+            {
+                return NotFound();
+            }
+            var companyDelete = _companyRepository.GetCompany(companyId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_companyRepository.DeleteCompany(companyDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting company");
+            }
+            return NoContent();
 
-
+        }
     }
 }

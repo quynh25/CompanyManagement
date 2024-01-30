@@ -4,6 +4,7 @@ using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
 using CompanyManagement.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.Design;
 
 namespace CompanyManagement.Controllers
 {
@@ -91,6 +92,28 @@ namespace CompanyManagement.Controllers
             }
             return Ok("successfully created");
 
+        }
+
+        [HttpDelete("{centerId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCenter(int centerId)
+        {
+            if (!_centerRepository.CenterExists(centerId))
+            {
+                return NotFound();
+            }
+            var centerDelete = _centerRepository.GetCenter(centerId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_centerRepository.DeleteCenter(centerDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting center");
+            }
+            return NoContent();
         }
     }
 }

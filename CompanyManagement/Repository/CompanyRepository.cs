@@ -23,6 +23,12 @@ namespace CompanyManagement.Repository
             return Save();
         }
 
+        public bool DeleteCompany(Company company)
+        {
+            _context.Remove(company);
+            return Save();
+        }
+
         //HIỂN THỊ
         public ICollection<Company> GetCompanies()
         {

@@ -18,6 +18,12 @@ namespace CompanyManagement.Repository
             return Save();
         }
 
+        public bool DeleteDeparment(Derpartment derpartment)
+        {
+            _context.Remove(derpartment);
+            return Save();
+        }
+
         public bool DerpartmentExits(int id)
         {
             return _context.Derpartments.Any(x => x.Id == id);

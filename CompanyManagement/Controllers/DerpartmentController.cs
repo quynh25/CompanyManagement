@@ -4,6 +4,7 @@ using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
 using CompanyManagement.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.Design;
 
 namespace CompanyManagement.Controllers
 {
@@ -89,6 +90,27 @@ namespace CompanyManagement.Controllers
                 return StatusCode(500, ModelState);
             }
             return Ok("successfully created");
+        }
+        [HttpDelete("{departmentId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteDepartment(int departmentId)
+        {
+            if (!_derpartmentRepository.DerpartmentExits(departmentId))
+            {
+                return NotFound();
+            }
+            var departmentDelete = _derpartmentRepository.GetDerpartmentsById(departmentId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_derpartmentRepository.DeleteDeparment(departmentDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting department");
+            }
+            return NoContent();
         }
     }
 }

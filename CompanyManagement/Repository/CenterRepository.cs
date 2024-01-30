@@ -23,6 +23,12 @@ namespace CompanyManagement.Repository
             return Save();
         }
 
+        public bool DeleteCenter(Center center)
+        {
+            _context.Remove(center);
+            return Save();
+        }
+
         public ICollection<Center> GetCenter()
         {
             return _context.Centers.ToList();

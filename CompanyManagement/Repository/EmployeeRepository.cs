@@ -19,6 +19,12 @@ namespace CompanyManagement.Repository
             return Save();
         }
 
+        public bool DeleteEmployee(Employee employee)
+        {
+            _dataContext.Remove(employee);
+            return Save();
+        }
+
         public bool EmployeeExits(int id)
         {
            return _dataContext.Employees.Any(e => e.Id == id);

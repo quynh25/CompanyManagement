@@ -9,6 +9,7 @@ namespace CompanyManagement.Interfaces
         ICollection<Center> GetCenterByDerpartment(int centerId);
         bool DerpartmentExits(int id);
         bool CreateDeparment(Derpartment department);
+        bool DeleteDeparment(Derpartment derpartment);
         bool Save();
 
     }

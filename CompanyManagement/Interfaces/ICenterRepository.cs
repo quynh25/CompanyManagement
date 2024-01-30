@@ -9,6 +9,7 @@ namespace CompanyManagement.Interfaces
         ICollection<Company> GetCompanyByCenter(int companyId);
         bool CenterExists(int id);
         bool CreateCenter(Center center);
+        bool DeleteCenter(Center center);
         bool Save();
     }
 }
